@@ -26,6 +26,8 @@ No uploads. No server. No data tracking. 🚀
 
 ## 🖥️ Live Preview 
 
+![AudioExtraction](https://i.postimg.cc/mrD0KPLx/Audio-Extraction.png)
+
 https://akash098p.github.io/VideoToAudioExtractor/
 
 ## 📂 Supported Input Formats
