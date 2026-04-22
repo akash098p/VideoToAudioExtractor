@@ -27,7 +27,7 @@ No uploads. No server. No data tracking. 🚀
 ## 🖥️ Live Preview 
 
 ![AudioExtraction](https://i.postimg.cc/SxZbP6RN/Screenshot-2026-04-22-19-34-39-990-com-android-chrome.png)
-![AudioExtraction](![AudioExtraction](https://i.postimg.cc/SxZbP6RN/Screenshot-2026-04-22-19-34-39-990-com-android-chrome.png))
+![AudioExtraction](https://i.postimg.cc/SxZbP6RN/Screenshot-2026-04-22-19-34-39-990-com-android-chrome.png)
 
 https://akash098p.github.io/VideoToAudioExtractor/
 
