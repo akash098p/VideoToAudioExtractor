@@ -1,4 +1,4 @@
-# 🎵 Video Audio Trimmer
+# AudioStudio 
 
 A modern, fully **client-side web application** to extract, trim, preview, and download audio from video files — directly in the browser.  
 No uploads. No server. No data tracking. 🚀
