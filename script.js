@@ -388,7 +388,8 @@ async function previewTrim(p) {
   showStatus(p, 'Generating preview...', 'processing');
   try {
     const trimmed = await renderTrim(s.buf, s.start * s.dur, (s.end - s.start) * s.dur);
-    const blob = bufToWav(trimmed);
+    const format = document.getElementById(p + '-format').value;
+    const blob = await encodeAudio(trimmed, format);
     const url = URL.createObjectURL(blob);
     const wrapId = p + '-preview-audio-wrap';
     const audId = p + '-preview-audio';
@@ -409,14 +410,57 @@ async function exportAudio(p) {
   showStatus(p, 'Exporting...', 'processing');
   try {
     const trimmed = await renderTrim(s.buf, s.start * s.dur, (s.end - s.start) * s.dur);
-    const blob = bufToWav(trimmed);
+    const format = document.getElementById(p + '-format').value;
+    const blob = await encodeAudio(trimmed, format);
     const name = (p === 'v' ? document.getElementById('v-filename') : document.getElementById('a-filename')).textContent;
     const base = name.replace(/\.[^.]+$/, '');
-    dlBlob(blob, base + '_trimmed.wav');
+    dlBlob(blob, base + '_trimmed.' + format);
     showStatus(p, '✓ Downloaded successfully!', 'success');
   } catch(e) {
     showStatus(p, 'Error: ' + e.message, 'error');
   }
+}
+
+async function encodeAudio(buf, format) {
+  if (format === 'wav') return bufToWav(buf);
+  if (format !== 'mp3') throw new Error('Unsupported export format');
+  if (typeof lamejs === 'undefined') {
+    throw new Error('MP3 encoder could not be loaded. Check your internet connection and try again.');
+  }
+
+  const channels = Math.min(buf.numberOfChannels, 2);
+  const sampleRate = buf.sampleRate;
+  const bitrate = 128;
+  const encoder = new lamejs.Mp3Encoder(channels, sampleRate, bitrate);
+  const left = buf.getChannelData(0);
+  const right = channels === 2 ? buf.getChannelData(1) : left;
+  const leftSamples = new Int16Array(left.length);
+  const rightSamples = channels === 2 ? new Int16Array(right.length) : leftSamples;
+
+  for (let i = 0; i < left.length; i++) {
+    leftSamples[i] = floatToInt16(left[i]);
+    if (channels === 2) rightSamples[i] = floatToInt16(right[i]);
+  }
+
+  const mp3Data = [];
+  const sampleBlockSize = 1152;
+  for (let i = 0; i < leftSamples.length; i += sampleBlockSize) {
+    const leftBlock = leftSamples.subarray(i, i + sampleBlockSize);
+    const rightBlock = channels === 2 ? rightSamples.subarray(i, i + sampleBlockSize) : undefined;
+    const encoded = channels === 2
+      ? encoder.encodeBuffer(leftBlock, rightBlock)
+      : encoder.encodeBuffer(leftBlock);
+    if (encoded.length > 0) mp3Data.push(new Int8Array(encoded));
+  }
+
+  const finalBlock = encoder.flush();
+  if (finalBlock.length > 0) mp3Data.push(new Int8Array(finalBlock));
+  return new Blob(mp3Data, { type: 'audio/mpeg' });
+}
+
+function floatToInt16(value) {
+  const sample = Math.max(-1, Math.min(1, value));
+  return sample < 0 ? sample * 0x8000 : sample * 0x7fff;
 }
 
 async function renderTrim(buf, startT, durT) {

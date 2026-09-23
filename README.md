@@ -15,12 +15,11 @@ No uploads. No server. No data tracking. 🚀
   - Start & End sliders
 - ▶️ Live preview of trimmed audio
 - 💾 Download trimmed audio
-- 🎼 Output format selection (WAV, MP3*, OGG*)
+- 🎼 Output format selection (WAV or MP3)
 - 📱 Fully responsive & mobile-friendly UI
 - 🔒 100% client-side — your files never leave your device
 
-> ⚠️ MP3 & OGG export currently download as WAV due to browser limitations.  
-> True MP3/OGG encoding requires additional libraries (e.g. `lamejs`).
+> MP3 export uses the browser-loaded `lamejs` encoder at 128 kbps. WAV remains available when lossless output is required.
 
 ---
 
